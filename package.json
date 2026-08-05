@@ -1,0 +1,49 @@
+{
+  "name": "incompatible-packages",
+  "author": "lumine-code",
+  "version": "1.0.0",
+  "description": "Show installed packages whose native modules are incompatible with the current version.",
+  "keywords": [
+    "native-module",
+    "warning",
+    "broken",
+    "mismatch",
+    "node"
+  ],
+  "repository": "https://github.com/lumine-code/incompatible-packages",
+  "bugs": {
+    "url": "https://github.com/lumine-code/incompatible-packages/issues"
+  },
+  "license": "MIT",
+  "main": "./lib/main",
+  "engines": {
+    "lumine": "^1.0.0"
+  },
+  "scripts": {
+    "test": "lumine --test spec",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "consumedServices": {
+    "status-bar": {
+      "versions": {
+        "^1.0.0": "consumeStatusBar"
+      }
+    }
+  },
+  "deserializers": {
+    "IncompatiblePackagesComponent": "deserializeIncompatiblePackagesComponent"
+  },
+  "dependencies": {
+    "@lumine-code/etch": "https://github.com/lumine-code/etch.git#9c74208ad932e0694cb3f7ad575e7205154dea8f"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^18.2.2",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.6"
+  }
+}
