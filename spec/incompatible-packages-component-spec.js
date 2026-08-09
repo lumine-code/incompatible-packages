@@ -19,9 +19,9 @@ describe("IncompatiblePackagesComponent", () => {
         getBuildFailureOutput() {
           return null;
         },
-        path: "/Users/joe/.atom/packages/incompatible-1",
+        path: "/Users/joe/.lumine/packages/incompatible-1",
         metadata: {
-          repository: "https://github.com/atom/incompatible-1",
+          repository: "https://github.com/example/incompatible-1",
           version: "1.0.0",
         },
         incompatibleModules: [
@@ -40,9 +40,9 @@ describe("IncompatiblePackagesComponent", () => {
         getBuildFailureOutput() {
           return null;
         },
-        path: "/Users/joe/.atom/packages/incompatible-2",
+        path: "/Users/joe/.lumine/packages/incompatible-2",
         metadata: {
-          repository: "https://github.com/atom/incompatible-2",
+          repository: "https://github.com/example/incompatible-2",
           version: "1.0.0",
         },
         incompatibleModules: [{ name: "z", version: "1.0.0", error: "Expected version X, got Y" }],
@@ -58,9 +58,9 @@ describe("IncompatiblePackagesComponent", () => {
         getBuildFailureOutput() {
           return null;
         },
-        path: "/Users/joe/.atom/packages/b",
+        path: "/Users/joe/.lumine/packages/b",
         metadata: {
-          repository: "https://github.com/atom/b",
+          repository: "https://github.com/example/b",
           version: "1.0.0",
         },
         incompatibleModules: [],
@@ -218,9 +218,9 @@ describe("IncompatiblePackagesComponent", () => {
           expect(component.refs.reloadButton).toBeDefined();
           expect(element.querySelector(".alert").textContent).toMatch(/2 of 2/);
 
-          spyOn(atom.window, "reload");
+          spyOn(lumine.window, "reload");
           component.refs.reloadButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
-          expect(atom.window.reload).toHaveBeenCalled();
+          expect(lumine.window.reload).toHaveBeenCalled();
         });
       });
     });
@@ -237,11 +237,11 @@ describe("IncompatiblePackagesComponent", () => {
 
           await etchScheduler.getNextUpdatePromise();
 
-          spyOn(atom.workspace, "open");
+          spyOn(lumine.workspace, "open");
           element
             .querySelector(".incompatible-package:nth-child(2) button")
             .dispatchEvent(new CustomEvent("click", { bubbles: true }));
-          expect(atom.workspace.open).toHaveBeenCalledWith(
+          expect(lumine.workspace.open).toHaveBeenCalledWith(
             "lumine://config/packages/incompatible-2",
           );
         });

@@ -14,7 +14,7 @@ To install `incompatible-packages` search for _incompatible-packages_ in the Ins
 
 ## Commands
 
-Commands available in `atom-workspace`:
+Commands available in `lumine-workspace`:
 
 - `incompatible-packages:view`: open the list of incompatible packages.
 

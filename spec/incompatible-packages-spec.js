@@ -4,23 +4,23 @@ const StatusIconComponent = require("../lib/status-icon-component");
 
 // Falls back to the bottom panels when no footer panel holds the status bar.
 function findStatusBar() {
-  if (typeof atom.workspace.getFooterPanels === "function") {
-    const footerPanels = atom.workspace.getFooterPanels();
+  if (typeof lumine.workspace.getFooterPanels === "function") {
+    const footerPanels = lumine.workspace.getFooterPanels();
     if (footerPanels.length > 0) {
       return footerPanels[0].getItem();
     }
   }
 
-  return atom.workspace.getBottomPanels()[0].getItem();
+  return lumine.workspace.getBottomPanels()[0].getItem();
 }
 
 describe("Incompatible packages", () => {
   let statusBar;
 
   beforeEach(() => {
-    atom.views.getView(atom.workspace);
+    lumine.views.getView(lumine.workspace);
 
-    waitsForPromise(() => atom.packages.activatePackage("status-bar"));
+    waitsForPromise(() => lumine.packages.activatePackage("status-bar"));
 
     runs(() => {
       statusBar = findStatusBar();
@@ -29,12 +29,12 @@ describe("Incompatible packages", () => {
 
   describe("when there are packages with incompatible native modules", () => {
     beforeEach(() => {
-      let incompatiblePackage = atom.packages.loadPackage(
+      let incompatiblePackage = lumine.packages.loadPackage(
         path.join(__dirname, "fixtures", "incompatible-package"),
       );
       spyOn(incompatiblePackage, "isCompatible").andReturn(false);
       incompatiblePackage.incompatibleModules = [];
-      waitsForPromise(() => atom.packages.activatePackage("incompatible-packages"));
+      waitsForPromise(() => lumine.packages.activatePackage("incompatible-packages"));
 
       waits(1);
     });
@@ -50,7 +50,7 @@ describe("Incompatible packages", () => {
         statusBarIcon.element.dispatchEvent(new MouseEvent("click"));
 
         let activePaneItem;
-        waitsFor(() => (activePaneItem = atom.workspace.getActivePaneItem()));
+        waitsFor(() => (activePaneItem = lumine.workspace.getActivePaneItem()));
 
         runs(() => {
           expect(activePaneItem.constructor).toBe(IncompatiblePackagesComponent);
@@ -61,7 +61,7 @@ describe("Incompatible packages", () => {
 
   describe("when there are no packages with incompatible native modules", () => {
     beforeEach(() => {
-      waitsForPromise(() => atom.packages.activatePackage("incompatible-packages"));
+      waitsForPromise(() => lumine.packages.activatePackage("incompatible-packages"));
     });
 
     it("does not add an icon to the status bar", () => {

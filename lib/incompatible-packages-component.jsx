@@ -26,9 +26,9 @@ module.exports = class IncompatiblePackagesComponent {
       if (event.target === this.refs.rebuildButton) {
         this.rebuildIncompatiblePackages();
       } else if (event.target === this.refs.reloadButton) {
-        atom.window.reload();
+        lumine.window.reload();
       } else if (event.target.classList.contains("view-settings")) {
-        atom.workspace.open(`lumine://config/packages/${event.target.package.name}`);
+        lumine.workspace.open(`lumine://config/packages/${event.target.package.name}`);
       }
     });
   }
