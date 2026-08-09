@@ -218,9 +218,9 @@ describe("IncompatiblePackagesComponent", () => {
           expect(component.refs.reloadButton).toBeDefined();
           expect(element.querySelector(".alert").textContent).toMatch(/2 of 2/);
 
-          spyOn(atom, "reload");
+          spyOn(atom.window, "reload");
           component.refs.reloadButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
-          expect(atom.reload).toHaveBeenCalled();
+          expect(atom.window.reload).toHaveBeenCalled();
         });
       });
     });
