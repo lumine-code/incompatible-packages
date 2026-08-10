@@ -11,7 +11,7 @@ module.exports = class StatusIconComponent {
 
   render() {
     return (
-      <div className="incompatible-packages-status inline-block text text-error">
+      <div className="incompatible-packages-status text text-error">
         <span className="icon icon-bug" />
         <span className="incompatible-packages-count">{this.count}</span>
       </div>
