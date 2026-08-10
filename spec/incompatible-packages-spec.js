@@ -17,26 +17,24 @@ function findStatusBar() {
 describe("Incompatible packages", () => {
   let statusBar;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     lumine.views.getView(lumine.workspace);
 
-    waitsForPromise(() => lumine.packages.activatePackage("status-bar"));
+    await lumine.packages.activatePackage("status-bar");
 
-    runs(() => {
-      statusBar = findStatusBar();
-    });
+    statusBar = findStatusBar();
   });
 
   describe("when there are packages with incompatible native modules", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       let incompatiblePackage = lumine.packages.loadPackage(
         path.join(__dirname, "fixtures", "incompatible-package"),
       );
-      spyOn(incompatiblePackage, "isCompatible").andReturn(false);
+      spyOn(incompatiblePackage, "isCompatible").and.returnValue(false);
       incompatiblePackage.incompatibleModules = [];
-      waitsForPromise(() => lumine.packages.activatePackage("incompatible-packages"));
+      await lumine.packages.activatePackage("incompatible-packages");
 
-      waits(1);
+      await timeoutPromise(1);
     });
 
     it("adds an icon to the status bar", () => {
@@ -45,23 +43,21 @@ describe("Incompatible packages", () => {
     });
 
     describe("clicking the icon", () => {
-      it("displays the incompatible packages view in a pane", () => {
+      it("displays the incompatible packages view in a pane", async () => {
         let statusBarIcon = statusBar.getRightTiles()[0].getItem();
         statusBarIcon.element.dispatchEvent(new MouseEvent("click"));
 
         let activePaneItem;
-        waitsFor(() => (activePaneItem = lumine.workspace.getActivePaneItem()));
+        await conditionPromise(() => (activePaneItem = lumine.workspace.getActivePaneItem()));
 
-        runs(() => {
-          expect(activePaneItem.constructor).toBe(IncompatiblePackagesComponent);
-        });
+        expect(activePaneItem.constructor).toBe(IncompatiblePackagesComponent);
       });
     });
   });
 
   describe("when there are no packages with incompatible native modules", () => {
-    beforeEach(() => {
-      waitsForPromise(() => lumine.packages.activatePackage("incompatible-packages"));
+    beforeEach(async () => {
+      await lumine.packages.activatePackage("incompatible-packages");
     });
 
     it("does not add an icon to the status bar", () => {

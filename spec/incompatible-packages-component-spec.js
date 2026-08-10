@@ -69,182 +69,168 @@ describe("IncompatiblePackagesComponent", () => {
   });
 
   describe("when packages have not finished loading", () => {
-    it("delays rendering incompatible packages until the end of the tick", () => {
-      waitsForPromise(async () => {
-        let component = new IncompatiblePackagesComponent({
-          getActivePackages: () => [],
-          getLoadedPackages: () => packages,
-        });
-        let { element } = component;
-
-        expect(element.querySelectorAll(".incompatible-package").length).toEqual(0);
-
-        await etchScheduler.getNextUpdatePromise();
-
-        expect(element.querySelectorAll(".incompatible-package").length).toBeGreaterThan(0);
+    it("delays rendering incompatible packages until the end of the tick", async () => {
+      let component = new IncompatiblePackagesComponent({
+        getActivePackages: () => [],
+        getLoadedPackages: () => packages,
       });
+      let { element } = component;
+
+      expect(element.querySelectorAll(".incompatible-package").length).toEqual(0);
+
+      await etchScheduler.getNextUpdatePromise();
+
+      expect(element.querySelectorAll(".incompatible-package").length).toBeGreaterThan(0);
     });
   });
 
   describe("when there are no incompatible packages", () => {
-    it("does not render incompatible packages or the rebuild button", () => {
-      waitsForPromise(async () => {
-        expect(packages[2].isCompatible()).toBe(true);
-        let compatiblePackages = [packages[2]];
+    it("does not render incompatible packages or the rebuild button", async () => {
+      expect(packages[2].isCompatible()).toBe(true);
+      let compatiblePackages = [packages[2]];
 
-        let component = new IncompatiblePackagesComponent({
-          getActivePackages: () => compatiblePackages,
-          getLoadedPackages: () => compatiblePackages,
-        });
-        let { element } = component;
-
-        await etchScheduler.getNextUpdatePromise();
-
-        expect(element.querySelectorAll(".incompatible-package").length).toBe(0);
-        expect(element.querySelector("button")).toBeNull();
+      let component = new IncompatiblePackagesComponent({
+        getActivePackages: () => compatiblePackages,
+        getLoadedPackages: () => compatiblePackages,
       });
+      let { element } = component;
+
+      await etchScheduler.getNextUpdatePromise();
+
+      expect(element.querySelectorAll(".incompatible-package").length).toBe(0);
+      expect(element.querySelector("button")).toBeNull();
     });
   });
 
   describe("when some packages previously failed to rebuild", () => {
-    it("renders them with failed build status and error output", () => {
-      waitsForPromise(async () => {
-        packages[1].getBuildFailureOutput = function () {
-          return "The build failed";
-        };
+    it("renders them with failed build status and error output", async () => {
+      packages[1].getBuildFailureOutput = function () {
+        return "The build failed";
+      };
 
-        let component = new IncompatiblePackagesComponent({
-          getActivePackages: () => packages,
-          getLoadedPackages: () => packages,
-        });
-        let { element } = component;
-
-        await etchScheduler.getNextUpdatePromise();
-        let packageElement = element.querySelector(".incompatible-package:nth-child(2)");
-
-        expect(packageElement.querySelector(".badge").textContent).toBe("Rebuild Failed");
-        expect(packageElement.querySelector("pre").textContent).toBe("The build failed");
+      let component = new IncompatiblePackagesComponent({
+        getActivePackages: () => packages,
+        getLoadedPackages: () => packages,
       });
+      let { element } = component;
+
+      await etchScheduler.getNextUpdatePromise();
+      let packageElement = element.querySelector(".incompatible-package:nth-child(2)");
+
+      expect(packageElement.querySelector(".badge").textContent).toBe("Rebuild Failed");
+      expect(packageElement.querySelector("pre").textContent).toBe("The build failed");
     });
   });
 
   describe("when there are incompatible packages", () => {
-    it("renders incompatible packages and the rebuild button", () => {
-      waitsForPromise(async () => {
+    it("renders incompatible packages and the rebuild button", async () => {
+      let component = new IncompatiblePackagesComponent({
+        getActivePackages: () => packages,
+        getLoadedPackages: () => packages,
+      });
+      let { element } = component;
+
+      await etchScheduler.getNextUpdatePromise();
+
+      expect(element.querySelectorAll(".incompatible-package").length).toEqual(2);
+      expect(element.querySelector("button")).not.toBeNull();
+    });
+
+    describe('when the "Rebuild All" button is clicked', () => {
+      it("rebuilds every incompatible package, updating each package's view with status", async () => {
         let component = new IncompatiblePackagesComponent({
           getActivePackages: () => packages,
           getLoadedPackages: () => packages,
         });
         let { element } = component;
+        jasmine.attachToDOM(element);
 
         await etchScheduler.getNextUpdatePromise();
 
-        expect(element.querySelectorAll(".incompatible-package").length).toEqual(2);
-        expect(element.querySelector("button")).not.toBeNull();
-      });
-    });
+        component.refs.rebuildButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
+        await etchScheduler.getNextUpdatePromise(); // view update
 
-    describe('when the "Rebuild All" button is clicked', () => {
-      it("rebuilds every incompatible package, updating each package's view with status", () => {
-        waitsForPromise(async () => {
-          let component = new IncompatiblePackagesComponent({
-            getActivePackages: () => packages,
-            getLoadedPackages: () => packages,
-          });
-          let { element } = component;
-          jasmine.attachToDOM(element);
+        expect(component.refs.rebuildButton.disabled).toBe(true);
 
-          await etchScheduler.getNextUpdatePromise();
+        expect(packages[0].resolveRebuild).toBeDefined();
 
-          component.refs.rebuildButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
-          await etchScheduler.getNextUpdatePromise(); // view update
+        expect(element.querySelector(".incompatible-package:nth-child(1) .badge").textContent).toBe(
+          "Rebuilding",
+        );
+        expect(element.querySelector(".incompatible-package:nth-child(2) .badge")).toBeNull();
 
-          expect(component.refs.rebuildButton.disabled).toBe(true);
+        packages[0].resolveRebuild({ code: 0 }); // simulate rebuild success
+        await etchScheduler.getNextUpdatePromise(); // view update
 
-          expect(packages[0].resolveRebuild).toBeDefined();
+        expect(packages[1].resolveRebuild).toBeDefined();
 
-          expect(
-            element.querySelector(".incompatible-package:nth-child(1) .badge").textContent,
-          ).toBe("Rebuilding");
-          expect(element.querySelector(".incompatible-package:nth-child(2) .badge")).toBeNull();
+        expect(element.querySelector(".incompatible-package:nth-child(1) .badge").textContent).toBe(
+          "Rebuild Succeeded",
+        );
+        expect(element.querySelector(".incompatible-package:nth-child(2) .badge").textContent).toBe(
+          "Rebuilding",
+        );
 
-          packages[0].resolveRebuild({ code: 0 }); // simulate rebuild success
-          await etchScheduler.getNextUpdatePromise(); // view update
+        packages[1].resolveRebuild({
+          code: 12,
+          stderr: "This is an error from the test!",
+        }); // simulate rebuild failure
+        await etchScheduler.getNextUpdatePromise(); // view update
 
-          expect(packages[1].resolveRebuild).toBeDefined();
-
-          expect(
-            element.querySelector(".incompatible-package:nth-child(1) .badge").textContent,
-          ).toBe("Rebuild Succeeded");
-          expect(
-            element.querySelector(".incompatible-package:nth-child(2) .badge").textContent,
-          ).toBe("Rebuilding");
-
-          packages[1].resolveRebuild({
-            code: 12,
-            stderr: "This is an error from the test!",
-          }); // simulate rebuild failure
-          await etchScheduler.getNextUpdatePromise(); // view update
-
-          expect(
-            element.querySelector(".incompatible-package:nth-child(1) .badge").textContent,
-          ).toBe("Rebuild Succeeded");
-          expect(
-            element.querySelector(".incompatible-package:nth-child(2) .badge").textContent,
-          ).toBe("Rebuild Failed");
-          expect(element.querySelector(".incompatible-package:nth-child(2) pre").textContent).toBe(
-            "This is an error from the test!",
-          );
-        });
+        expect(element.querySelector(".incompatible-package:nth-child(1) .badge").textContent).toBe(
+          "Rebuild Succeeded",
+        );
+        expect(element.querySelector(".incompatible-package:nth-child(2) .badge").textContent).toBe(
+          "Rebuild Failed",
+        );
+        expect(element.querySelector(".incompatible-package:nth-child(2) pre").textContent).toBe(
+          "This is an error from the test!",
+        );
       });
 
-      it("displays a prompt to reload the editor when the packages finish rebuilding", () => {
-        waitsForPromise(async () => {
-          let component = new IncompatiblePackagesComponent({
-            getActivePackages: () => packages,
-            getLoadedPackages: () => packages,
-          });
-          let { element } = component;
-          jasmine.attachToDOM(element);
-          await etchScheduler.getNextUpdatePromise(); // view update
-
-          component.refs.rebuildButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
-          expect(packages[0].resolveRebuild({ code: 0 }));
-          await new Promise(global.setImmediate);
-          expect(packages[1].resolveRebuild({ code: 0 }));
-
-          await etchScheduler.getNextUpdatePromise(); // view update
-
-          expect(component.refs.reloadButton).toBeDefined();
-          expect(element.querySelector(".alert").textContent).toMatch(/2 of 2/);
-
-          spyOn(lumine.window, "reload");
-          component.refs.reloadButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
-          expect(lumine.window.reload).toHaveBeenCalled();
+      it("displays a prompt to reload the editor when the packages finish rebuilding", async () => {
+        let component = new IncompatiblePackagesComponent({
+          getActivePackages: () => packages,
+          getLoadedPackages: () => packages,
         });
+        let { element } = component;
+        jasmine.attachToDOM(element);
+        await etchScheduler.getNextUpdatePromise(); // view update
+
+        component.refs.rebuildButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
+        expect(packages[0].resolveRebuild({ code: 0 }));
+        await new Promise(global.setImmediate);
+        expect(packages[1].resolveRebuild({ code: 0 }));
+
+        await etchScheduler.getNextUpdatePromise(); // view update
+
+        expect(component.refs.reloadButton).toBeDefined();
+        expect(element.querySelector(".alert").textContent).toMatch(/2 of 2/);
+
+        spyOn(lumine.window, "reload");
+        component.refs.reloadButton.dispatchEvent(new CustomEvent("click", { bubbles: true }));
+        expect(lumine.window.reload).toHaveBeenCalled();
       });
     });
 
     describe('when the "Package Settings" button is clicked', () => {
-      it("opens the settings panel for the package", () => {
-        waitsForPromise(async () => {
-          let component = new IncompatiblePackagesComponent({
-            getActivePackages: () => packages,
-            getLoadedPackages: () => packages,
-          });
-          let { element } = component;
-          jasmine.attachToDOM(element);
-
-          await etchScheduler.getNextUpdatePromise();
-
-          spyOn(lumine.workspace, "open");
-          element
-            .querySelector(".incompatible-package:nth-child(2) button")
-            .dispatchEvent(new CustomEvent("click", { bubbles: true }));
-          expect(lumine.workspace.open).toHaveBeenCalledWith(
-            "lumine://config/packages/incompatible-2",
-          );
+      it("opens the settings panel for the package", async () => {
+        let component = new IncompatiblePackagesComponent({
+          getActivePackages: () => packages,
+          getLoadedPackages: () => packages,
         });
+        let { element } = component;
+        jasmine.attachToDOM(element);
+
+        await etchScheduler.getNextUpdatePromise();
+
+        spyOn(lumine.workspace, "open");
+        element
+          .querySelector(".incompatible-package:nth-child(2) button")
+          .dispatchEvent(new CustomEvent("click", { bubbles: true }));
+        expect(lumine.workspace.open).toHaveBeenCalledWith(
+          "lumine://config/packages/incompatible-2",
+        );
       });
     });
   });
