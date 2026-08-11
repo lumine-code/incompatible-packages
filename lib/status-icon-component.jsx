@@ -11,10 +11,10 @@ module.exports = class StatusIconComponent {
 
   render() {
     return (
-      <div className="incompatible-packages-status text text-error">
+      <status-bar-tile className="incompatible-packages-status text text-error">
         <span className="icon icon-bug" />
         <span className="incompatible-packages-count">{this.count}</span>
-      </div>
+      </status-bar-tile>
     );
   }
 };
