@@ -10,7 +10,7 @@ Show installed packages whose native modules are incompatible with the current v
 
 ## Installation
 
-To install `incompatible-packages` search for _incompatible-packages_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/incompatible-packages`.
+To install `incompatible-packages` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/incompatible-packages`.
 
 ## Commands
 
@@ -20,7 +20,7 @@ Commands available in `lumine-workspace`:
 
 ## Services
 
-- **status-bar** (`^1.0.0`): consumed to show an indicator in the status bar when incompatible packages are detected.
+- `status-bar`: consumed to show an indicator in the status bar when incompatible packages are detected.
 
 ## Customization
 
