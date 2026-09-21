@@ -1,6 +1,5 @@
 const path = require("path");
-const IncompatiblePackagesComponent = require("../lib/incompatible-packages-component");
-const StatusIconComponent = require("../lib/status-icon-component");
+let IncompatiblePackagesComponent, StatusIconComponent;
 
 // Falls back to the bottom panels when no footer panel holds the status bar.
 function findStatusBar() {
@@ -33,6 +32,8 @@ describe("Incompatible packages", () => {
       spyOn(incompatiblePackage, "isCompatible").and.returnValue(false);
       incompatiblePackage.incompatibleModules = [];
       await lumine.packages.activatePackage("incompatible-packages");
+      IncompatiblePackagesComponent = require("../lib/incompatible-packages-component");
+      StatusIconComponent = require("../lib/status-icon-component");
 
       await timeoutPromise(1);
     });
@@ -51,6 +52,20 @@ describe("Incompatible packages", () => {
         await conditionPromise(() => (activePaneItem = lumine.workspace.getActivePaneItem()));
 
         expect(activePaneItem.constructor).toBe(IncompatiblePackagesComponent);
+      });
+
+      it("closes the view when the package is deactivated", async () => {
+        const statusBarIcon = statusBar.getRightTiles()[0].getItem();
+        statusBarIcon.element.dispatchEvent(new MouseEvent("click"));
+        let item;
+        await conditionPromise(() => {
+          item = lumine.workspace.getActivePaneItem();
+          return item instanceof IncompatiblePackagesComponent;
+        });
+
+        await lumine.packages.deactivatePackage("incompatible-packages");
+
+        expect(lumine.workspace.paneForItem(item)).toBeUndefined();
       });
     });
   });

@@ -19,10 +19,13 @@ module.exports = class IncompatiblePackagesComponent {
     if (this.packageManager.getActivePackages().length > 0) {
       this.populateIncompatiblePackages();
     } else {
-      global.setImmediate(this.populateIncompatiblePackages.bind(this));
+      this.populateHandle = global.setImmediate(() => {
+        this.populateHandle = null;
+        if (!this.destroyed) this.populateIncompatiblePackages();
+      });
     }
 
-    this.element.addEventListener("click", (event) => {
+    this.handleClick = (event) => {
       if (event.target === this.refs.rebuildButton) {
         this.rebuildIncompatiblePackages();
       } else if (event.target === this.refs.reloadButton) {
@@ -30,10 +33,22 @@ module.exports = class IncompatiblePackagesComponent {
       } else if (event.target.classList.contains("view-settings")) {
         lumine.workspace.open(`lumine://config/packages/${event.target.package.name}`);
       }
-    });
+    };
+    this.element.addEventListener("click", this.handleClick);
   }
 
   update() {}
+
+  destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
+    if (this.populateHandle != null) {
+      global.clearImmediate(this.populateHandle);
+      this.populateHandle = null;
+    }
+    this.element?.removeEventListener("click", this.handleClick);
+    return etch.destroy(this);
+  }
 
   render() {
     if (!this.loaded) {
