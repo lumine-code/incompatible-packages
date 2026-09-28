@@ -13,6 +13,13 @@ function findStatusBar() {
   return lumine.workspace.getBottomPanels()[0].getItem();
 }
 
+function findStatusBarIcon(statusBar) {
+  return statusBar
+    .getRightTiles()
+    .map((tile) => tile.getItem())
+    .find((item) => item instanceof StatusIconComponent);
+}
+
 describe("Incompatible packages", () => {
   let statusBar;
 
@@ -35,17 +42,17 @@ describe("Incompatible packages", () => {
       IncompatiblePackagesComponent = require("../lib/incompatible-packages-component");
       StatusIconComponent = require("../lib/status-icon-component");
 
-      await timeoutPromise(1);
+      await conditionPromise(() => findStatusBarIcon(statusBar));
     });
 
     it("adds an icon to the status bar", () => {
-      let statusBarIcon = statusBar.getRightTiles()[0].getItem();
+      const statusBarIcon = findStatusBarIcon(statusBar);
       expect(statusBarIcon.constructor).toBe(StatusIconComponent);
     });
 
     describe("clicking the icon", () => {
       it("displays the incompatible packages view in a pane", async () => {
-        let statusBarIcon = statusBar.getRightTiles()[0].getItem();
+        const statusBarIcon = findStatusBarIcon(statusBar);
         statusBarIcon.element.dispatchEvent(new MouseEvent("click"));
 
         let activePaneItem;
@@ -55,7 +62,7 @@ describe("Incompatible packages", () => {
       });
 
       it("closes the view when the package is deactivated", async () => {
-        const statusBarIcon = statusBar.getRightTiles()[0].getItem();
+        const statusBarIcon = findStatusBarIcon(statusBar);
         statusBarIcon.element.dispatchEvent(new MouseEvent("click"));
         let item;
         await conditionPromise(() => {
