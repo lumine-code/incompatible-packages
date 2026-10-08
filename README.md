@@ -2,6 +2,8 @@
 
 Show installed packages whose native modules are incompatible with the current version.
 
+Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/incompatible-packages`).
+
 ## Features
 
 - **Compatibility scan**: checks installed packages for native modules that fail to load.
