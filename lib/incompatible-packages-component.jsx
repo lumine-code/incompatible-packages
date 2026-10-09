@@ -180,6 +180,7 @@ module.exports = class IncompatiblePackagesComponent {
   }
 
   async rebuildIncompatiblePackages() {
+    if (this.destroyed || this.rebuildInProgress) return;
     this.rebuildInProgress = true;
     let rebuiltPackageCount = 0;
     for (let pack of this.incompatiblePackages) {
