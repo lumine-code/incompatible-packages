@@ -183,20 +183,30 @@ module.exports = class IncompatiblePackagesComponent {
     if (this.destroyed || this.rebuildInProgress) return;
     this.rebuildInProgress = true;
     let rebuiltPackageCount = 0;
-    for (let pack of this.incompatiblePackages) {
-      this.setPackageStatus(pack, REBUILDING);
-      let { code, stderr } = await pack.rebuild();
-      if (code === 0) {
-        this.setPackageStatus(pack, REBUILD_SUCCEEDED);
-        rebuiltPackageCount++;
-      } else {
-        this.setRebuildFailureOutput(pack, stderr);
-        this.setPackageStatus(pack, REBUILD_FAILED);
+    try {
+      for (let pack of this.incompatiblePackages) {
+        this.setPackageStatus(pack, REBUILDING);
+        let result;
+        try {
+          result = await pack.rebuild();
+        } catch (error) {
+          this.setRebuildFailureOutput(pack, error?.message ?? String(error));
+          this.setPackageStatus(pack, REBUILD_FAILED);
+          continue;
+        }
+        if (result.code === 0) {
+          this.setPackageStatus(pack, REBUILD_SUCCEEDED);
+          rebuiltPackageCount++;
+        } else {
+          this.setRebuildFailureOutput(pack, result.stderr);
+          this.setPackageStatus(pack, REBUILD_FAILED);
+        }
       }
+    } finally {
+      this.rebuildInProgress = false;
+      this.rebuiltPackageCount = rebuiltPackageCount;
+      etch.update(this);
     }
-    this.rebuildInProgress = false;
-    this.rebuiltPackageCount = rebuiltPackageCount;
-    etch.update(this);
   }
 
   setPackageStatus(pack, status) {
