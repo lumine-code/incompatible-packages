@@ -78,6 +78,8 @@ describe("IncompatiblePackagesComponent", () => {
 
       expect(element.querySelectorAll(".incompatible-package").length).toEqual(0);
 
+      // A renderer frame can finish before the deferred Node package check.
+      await new Promise(global.setImmediate);
       await etchScheduler.getNextUpdatePromise();
 
       expect(element.querySelectorAll(".incompatible-package").length).toBeGreaterThan(0);
