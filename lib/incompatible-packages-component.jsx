@@ -7,21 +7,45 @@ const REBUILD_FAILED = "rebuild-failed";
 const REBUILD_SUCCEEDED = "rebuild-succeeded";
 
 module.exports = class IncompatiblePackagesComponent {
-  constructor(packageManager) {
-    this.rebuildStatuses = new Map();
-    this.rebuildFailureOutputs = new Map();
-    this.rebuildInProgress = false;
-    this.rebuiltPackageCount = 0;
+  constructor(packageManager, { state } = {}) {
+    this.state = state || {
+      views: new Set(),
+      rebuildStatuses: new Map(),
+      rebuildFailureOutputs: new Map(),
+      rebuildInProgress: false,
+      rebuiltPackageCount: 0,
+      loaded: false,
+      incompatiblePackages: [],
+      populateHandle: null,
+    };
+    for (const name of [
+      "rebuildStatuses",
+      "rebuildFailureOutputs",
+      "rebuildInProgress",
+      "rebuiltPackageCount",
+      "loaded",
+      "incompatiblePackages",
+      "populateHandle",
+    ]) {
+      Object.defineProperty(this, name, {
+        get: () => this.state[name],
+        set: (value) => {
+          this.state[name] = value;
+        },
+      });
+    }
+    this.state.views.add(this);
     this.packageManager = packageManager;
-    this.loaded = false;
     etch.initialize(this);
 
-    if (this.packageManager.getActivePackages().length > 0) {
+    if (state) {
+      // The new surface observes the existing work without starting it again.
+    } else if (this.packageManager.getActivePackages().length > 0) {
       this.populateIncompatiblePackages();
     } else {
       this.populateHandle = global.setImmediate(() => {
         this.populateHandle = null;
-        if (!this.destroyed) this.populateIncompatiblePackages();
+        this.state.views.values().next().value?.populateIncompatiblePackages();
       });
     }
 
@@ -39,10 +63,27 @@ module.exports = class IncompatiblePackagesComponent {
 
   update() {}
 
+  copy({ signal } = {}) {
+    signal?.throwIfAborted();
+    const copy = new IncompatiblePackagesComponent(this.packageManager, { state: this.state });
+    const scrollTop = this.element.scrollTop;
+    const initialScrollTop = copy.element.scrollTop;
+    requestAnimationFrame(() => {
+      if (!copy.destroyed && copy.element.scrollTop === initialScrollTop)
+        copy.element.scrollTop = scrollTop;
+    });
+    return copy;
+  }
+
+  updateViews() {
+    return Promise.all(Array.from(this.state.views, (view) => etch.update(view)));
+  }
+
   destroy() {
     if (this.destroyed) return;
     this.destroyed = true;
-    if (this.populateHandle != null) {
+    this.state.views.delete(this);
+    if (this.state.views.size === 0 && this.populateHandle != null) {
       global.clearImmediate(this.populateHandle);
       this.populateHandle = null;
     }
@@ -176,7 +217,7 @@ module.exports = class IncompatiblePackagesComponent {
     }
 
     this.loaded = true;
-    etch.update(this);
+    this.updateViews();
   }
 
   async rebuildIncompatiblePackages() {
@@ -205,18 +246,18 @@ module.exports = class IncompatiblePackagesComponent {
     } finally {
       this.rebuildInProgress = false;
       this.rebuiltPackageCount = rebuiltPackageCount;
-      etch.update(this);
+      this.updateViews();
     }
   }
 
   setPackageStatus(pack, status) {
     this.rebuildStatuses.set(pack, status);
-    etch.update(this);
+    this.updateViews();
   }
 
   setRebuildFailureOutput(pack, output) {
     this.rebuildFailureOutputs.set(pack, output);
-    etch.update(this);
+    this.updateViews();
   }
 
   getTitle() {
