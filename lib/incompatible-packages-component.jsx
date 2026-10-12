@@ -1,6 +1,5 @@
 /** @jsx etch.dom */
 const etch = require("@lumine-code/etch");
-const restoreCopiedScroll = require("./restore-copied-scroll");
 
 const VIEW_URI = require("./view-uri");
 const REBUILDING = "rebuilding";
@@ -64,12 +63,12 @@ module.exports = class IncompatiblePackagesComponent {
 
   update() {}
 
-  copy({ signal } = {}) {
-    signal?.throwIfAborted();
-    const copy = new IncompatiblePackagesComponent(this.packageManager, { state: this.state });
-    const scrollTop = restoreCopiedScroll.capture(this);
-    restoreCopiedScroll(copy, scrollTop);
-    return copy;
+  canCopy() {
+    return false;
+  }
+
+  getSingletonKey() {
+    return "incompatible-packages:main";
   }
 
   updateViews() {
@@ -79,7 +78,6 @@ module.exports = class IncompatiblePackagesComponent {
   destroy() {
     if (this.destroyed) return;
     this.destroyed = true;
-    this.pendingCopyScrollRestore?.dispose();
     this.state.views.delete(this);
     if (this.state.views.size === 0 && this.populateHandle != null) {
       global.clearImmediate(this.populateHandle);
