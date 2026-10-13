@@ -10,6 +10,8 @@ Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/i
 - **Detailed view**: lists each incompatible package with its error output.
 - **Status bar indicator**: surfaces a warning in the status bar when incompatible packages are found.
 
+![The incompatible-packages view in Lumine.](.github/demo.png)
+
 ## Installation
 
 To install `incompatible-packages` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/incompatible-packages`.

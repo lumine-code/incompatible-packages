@@ -1,0 +1,16 @@
+{
+  "title": "incompatible-packages",
+  "description": "The incompatible-packages view in Lumine.",
+  "recordedOn": "2026-10-13",
+  "sourceRevision": "bc0f004dae3aef80a2f75e08fc2149042e00510d",
+  "mode": "normal",
+  "fontSettings": "default",
+  "images": [
+    {
+      "file": "demo.png",
+      "label": "The incompatible-packages view in Lumine.",
+      "width": 1100,
+      "height": 340
+    }
+  ]
+}
