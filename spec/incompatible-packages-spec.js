@@ -58,7 +58,8 @@ describe("Incompatible packages", () => {
       expect(menu.map((item) => item.command)).toEqual(["incompatible-packages:view"]);
       expect(menu[0].mouseBindingLabel).toBe("LMB");
       const [tooltip] = lumine.tooltips.findTooltips(element);
-      expect(tooltip.options.keyBindingCommand).toBeUndefined();
+      expect(tooltip.options.keyBindingCommand).toBe("incompatible-packages:view");
+      expect(tooltip.options.keyBindingExtra).toBeUndefined();
       expect(tooltip.getTitle()).toContain("Click to view the report.");
       const dispatch = spyOn(lumine.commands, "dispatch");
       element.dispatchEvent(new MouseEvent("click", { button: 2 }));
