@@ -1,4 +1,5 @@
 const path = require("path");
+const { createRequire } = require("node:module");
 let IncompatiblePackagesComponent, StatusIconComponent;
 
 // Falls back to the bottom panels when no footer panel holds the status bar.
@@ -17,7 +18,7 @@ function findStatusBarIcon(statusBar) {
   return statusBar
     .getRightTiles()
     .map((tile) => tile.getItem())
-    .find((item) => item instanceof StatusIconComponent);
+    .find((item) => item.element?.classList.contains("incompatible-packages-status"));
 }
 
 describe("Incompatible packages", () => {
@@ -38,9 +39,10 @@ describe("Incompatible packages", () => {
       );
       spyOn(incompatiblePackage, "isCompatible").and.returnValue(false);
       incompatiblePackage.incompatibleModules = [];
-      await lumine.packages.activatePackage("incompatible-packages");
-      IncompatiblePackagesComponent = require("../lib/incompatible-packages-component");
-      StatusIconComponent = require("../lib/status-icon-component");
+      const pack = await lumine.packages.activatePackage("incompatible-packages");
+      const requireActive = createRequire(path.join(pack.path, "package.json"));
+      IncompatiblePackagesComponent = requireActive("./lib/incompatible-packages-component");
+      StatusIconComponent = requireActive("./lib/status-icon-component");
 
       await conditionPromise(() => findStatusBarIcon(statusBar));
     });
