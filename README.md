@@ -20,6 +20,10 @@ Commands available in `lumine-workspace`:
 
 - `incompatible-packages:view`: open the list of incompatible packages.
 
+## Usage
+
+Left-click the status bar warning to open the incompatible-package report. Right-click opens a menu with the same report action.
+
 ## Services
 
 - `status-bar`: consumed to show an indicator in the status bar when incompatible packages are detected.

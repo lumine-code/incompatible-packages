@@ -4,8 +4,7 @@
       { "type": "separator" },
       {
         "label": "View Incompatible Packages",
-        "command": "incompatible-packages:view",
-        "mouseBindingLabel": "LMB"
+        "command": "incompatible-packages:view"
       },
       { "type": "separator" }
     ]
