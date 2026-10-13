@@ -8,7 +8,9 @@
           "submenu": [
             {
               "label": "Incompatible Packages",
-              "command": "incompatible-packages:view"
+              "command": "incompatible-packages:view",
+              "group": "diagnostics",
+              "order": 20
             }
           ]
         }
