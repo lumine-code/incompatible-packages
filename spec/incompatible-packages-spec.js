@@ -50,6 +50,17 @@ describe("Incompatible packages", () => {
       expect(statusBarIcon.constructor).toBe(StatusIconComponent);
     });
 
+    it("exposes the report in the context menu and leaves right-click free", () => {
+      const element = findStatusBarIcon(statusBar).element;
+      const menu = lumine.contextMenu.templateForElement(element);
+      expect(menu.map((item) => item.command)).toEqual(["incompatible-packages:view"]);
+      const dispatch = spyOn(lumine.commands, "dispatch");
+      element.dispatchEvent(new MouseEvent("click", { button: 2 }));
+      expect(dispatch).not.toHaveBeenCalled();
+      element.click();
+      expect(dispatch).toHaveBeenCalledWith(element, menu[0].command);
+    });
+
     describe("clicking the icon", () => {
       it("displays the incompatible packages view in a pane", async () => {
         const statusBarIcon = findStatusBarIcon(statusBar);

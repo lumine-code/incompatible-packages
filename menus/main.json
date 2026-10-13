@@ -1,0 +1,9 @@
+{
+  "context-menu": {
+    "status-bar-tile.incompatible-packages-status": [
+      { "type": "separator" },
+      { "label": "View Incompatible Packages", "command": "incompatible-packages:view" },
+      { "type": "separator" }
+    ]
+  }
+}
