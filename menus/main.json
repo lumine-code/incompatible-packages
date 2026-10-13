@@ -2,7 +2,11 @@
   "context-menu": {
     "status-bar-tile.incompatible-packages-status": [
       { "type": "separator" },
-      { "label": "View Incompatible Packages", "command": "incompatible-packages:view" },
+      {
+        "label": "View Incompatible Packages",
+        "command": "incompatible-packages:view",
+        "mouseBindingLabel": "LMB"
+      },
       { "type": "separator" }
     ]
   }

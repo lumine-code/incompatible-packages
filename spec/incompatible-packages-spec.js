@@ -54,6 +54,10 @@ describe("Incompatible packages", () => {
       const element = findStatusBarIcon(statusBar).element;
       const menu = lumine.contextMenu.templateForElement(element);
       expect(menu.map((item) => item.command)).toEqual(["incompatible-packages:view"]);
+      expect(menu[0].mouseBindingLabel).toBe("LMB");
+      const [tooltip] = lumine.tooltips.findTooltips(element);
+      expect(tooltip.options.keyBindingCommand).toBeUndefined();
+      expect(tooltip.getTitle()).toContain("Click to view the report.");
       const dispatch = spyOn(lumine.commands, "dispatch");
       element.dispatchEvent(new MouseEvent("click", { button: 2 }));
       expect(dispatch).not.toHaveBeenCalled();
