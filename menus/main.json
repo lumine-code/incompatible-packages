@@ -1,4 +1,34 @@
 {
+  "menu": [
+    {
+      "label": "View",
+      "submenu": [
+        {
+          "label": "Developer",
+          "submenu": [
+            {
+              "label": "Incompatible Packages",
+              "command": "incompatible-packages:view"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "Incompatible Packages",
+          "submenu": [
+            {
+              "label": "View",
+              "command": "incompatible-packages:view"
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "context-menu": {
     "status-bar-tile.incompatible-packages-status": [
       { "type": "separator" },
