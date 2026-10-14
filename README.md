@@ -6,9 +6,9 @@ Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/i
 
 ## Features
 
-- **Compatibility scan**: checks installed packages for native modules that fail to load.
+- **Compatibility scan**: checks installed packages for native modules that fail to load when you open the report.
 - **Detailed view**: lists each incompatible package with its error output.
-- **Status bar indicator**: surfaces a warning in the status bar when incompatible packages are found.
+- **Status bar indicator**: surfaces known native loading failures without loading unused bindings during startup.
 
 ![The incompatible-packages view in Lumine.](.github/demo.png)
 
@@ -24,7 +24,7 @@ Commands available in `lumine-workspace`:
 
 ## Usage
 
-Left-click the status bar warning to open the incompatible-package report. Right-click opens a menu with the same report action.
+Left-click the status bar warning to open the incompatible-package report and run the full native compatibility scan. Right-click opens a menu with the same report action.
 
 ## Services
 

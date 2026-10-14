@@ -38,6 +38,7 @@ describe("Incompatible packages", () => {
         path.join(__dirname, "fixtures", "incompatible-package"),
       );
       spyOn(incompatiblePackage, "isCompatible").and.returnValue(false);
+      incompatiblePackage.compatible = false;
       incompatiblePackage.incompatibleModules = [];
       const pack = await lumine.packages.activatePackage("incompatible-packages");
       const requireActive = createRequire(path.join(pack.path, "package.json"));
