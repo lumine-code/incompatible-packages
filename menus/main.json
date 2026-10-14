@@ -1,18 +1,13 @@
 {
   "menu": [
     {
-      "label": "View",
+      "label": "Developer",
       "submenu": [
         {
-          "label": "Developer",
-          "submenu": [
-            {
-              "label": "Incompatible Packages",
-              "command": "incompatible-packages:view",
-              "group": "diagnostics",
-              "order": 20
-            }
-          ]
+          "label": "Incompatible Packages",
+          "command": "incompatible-packages:view",
+          "group": "diagnostics",
+          "order": 20
         }
       ]
     },
