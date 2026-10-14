@@ -1,16 +1,61 @@
 {
   "title": "incompatible-packages",
   "description": "The incompatible-packages view in Lumine.",
-  "recordedOn": "2026-10-13",
-  "sourceRevision": "bc0f004dae3aef80a2f75e08fc2149042e00510d",
+  "recordedOn": "2026-10-14",
+  "sourceRevision": "ef1f8b6ddf90616a3c2540986dc716eb9ea3e7de",
+  "themeSourceRevision": "14a69683b0e3238e2bc128fbfae3866c1e4ee9c6",
   "mode": "normal",
   "fontSettings": "default",
+  "scenario": "demo.js",
+  "recipeHash": "41c5d25dd2761e71f784fa8a06e056984147184b79c1b500cfe5c3dd11bfafed",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "electron": "44.7.0",
+    "chrome": "152.0.7977.130",
+    "devicePixelRatio": 1,
+    "locale": "en-GB",
+    "fontFamily": "Fira Code, Menlo, DejaVu Sans Mono, Consolas, monospace",
+    "fontSize": 14,
+    "themes": ["one-day-syntax", "one-day-ui"]
+  },
+  "viewport": { "width": 1100, "height": 340 },
+  "cornerRadius": 10,
+  "sources": {
+    "editor": {
+      "revision": "385bd1b3ac2db600f1c7e077474d9da4d6deebc4",
+      "dirty": true,
+      "workingTreeHash": "08ba420fdc2c3d9a27ae9973c15f1efb7ccd57a582986958a8f1049bc8f34d60"
+    },
+    "package": {
+      "revision": "ef1f8b6ddf90616a3c2540986dc716eb9ea3e7de",
+      "dirty": true,
+      "workingTreeHash": "f35c06a952c88a797715755936172fb0cd4f9094e85aa300395622432c655a8a"
+    },
+    "incompatible-packages": {
+      "revision": "ef1f8b6ddf90616a3c2540986dc716eb9ea3e7de",
+      "dirty": true,
+      "workingTreeHash": "f35c06a952c88a797715755936172fb0cd4f9094e85aa300395622432c655a8a"
+    },
+    "one-theme": {
+      "revision": "14a69683b0e3238e2bc128fbfae3866c1e4ee9c6",
+      "dirty": true,
+      "workingTreeHash": "50ec2f83a6347dd8113870992ec4eb2be4014f3d9e12213c2f51b543f1eca793"
+    }
+  },
+  "fixtures": [
+    {
+      "file": "signal.js",
+      "sha256": "2a36953daadd1ae53070d0ff7ceab4624395fdb957104aa6e8ec92d785cadf1d"
+    }
+  ],
   "images": [
     {
       "file": "demo.png",
       "label": "The incompatible-packages view in Lumine.",
       "width": 1100,
-      "height": 340
+      "height": 340,
+      "sha256": "d4359f03b7077e2b17cd2c5e7d9629c4c5edd2c4b92c4db2ce02b983b7f37ed6"
     }
   ]
 }
