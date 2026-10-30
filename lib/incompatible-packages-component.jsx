@@ -89,11 +89,22 @@ module.exports = class IncompatiblePackagesComponent {
 
   render() {
     if (!this.loaded) {
-      return <div className="incompatible-packages padded">Loading...</div>;
+      return (
+        <div
+          className="incompatible-packages padded"
+          attributes={{ "data-scrollbar-kind": "panel" }}
+        >
+          Loading...
+        </div>
+      );
     }
 
     return (
-      <div className="incompatible-packages padded native-key-bindings" tabIndex="-1">
+      <div
+        className="incompatible-packages padded native-key-bindings"
+        tabIndex="-1"
+        attributes={{ "data-scrollbar-kind": "panel" }}
+      >
         {this.renderHeading()}
         {this.renderIncompatiblePackageList()}
       </div>
