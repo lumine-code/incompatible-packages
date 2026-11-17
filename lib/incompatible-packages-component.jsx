@@ -37,6 +37,7 @@ module.exports = class IncompatiblePackagesComponent {
     this.state.views.add(this);
     this.packageManager = packageManager;
     etch.initialize(this);
+    this.scrollbarNavigation = lumine.scrollbars.bindNavigation(this.element);
 
     if (state) {
       // The new surface observes the existing work without starting it again.
@@ -78,6 +79,7 @@ module.exports = class IncompatiblePackagesComponent {
   destroy() {
     if (this.destroyed) return;
     this.destroyed = true;
+    this.scrollbarNavigation?.dispose();
     this.state.views.delete(this);
     if (this.state.views.size === 0 && this.populateHandle != null) {
       global.clearImmediate(this.populateHandle);
